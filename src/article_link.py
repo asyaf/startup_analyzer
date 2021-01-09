@@ -1,8 +1,11 @@
 from bs4 import BeautifulSoup
 import os
 import requests
+import sys
 
 from src.utils import logger, random_string
+
+from YAPWrapper.yap_api import YapApi
 
 
 TEST_IMG_TAG = "<img alt='רוני זהבי מנכ\"ל ומייסד היי-בוב ' class=\"hd-image calc-share-with-zoom\" " \
@@ -27,7 +30,7 @@ class ArticleLink:
         self._img_out_path = None
 
     def _parse(self, img_tag):
-        self._title = img_tag.get(ArticleLink.TITLE_ATTR)
+        self.title = img_tag.get(ArticleLink.TITLE_ATTR)
         self._img_src = img_tag.get(ArticleLink.SRC_ATTR)
         self._url = img_tag.get(ArticleLink.URL_ATTR)
 
@@ -45,7 +48,7 @@ class ArticleLink:
             self._img_out_path = file_path
 
     def to_dict(self):
-        return {'title': self._title,
+        return {'title': self.title,
                 'img_src': self._img_src,
                 'url': self._url,
                 'img_out_path': self._img_out_path}
@@ -54,5 +57,12 @@ class ArticleLink:
 if __name__ == '__main__':
     soup = BeautifulSoup(TEST_IMG_TAG, 'lxml')
     article = ArticleLink(soup.find('img'), IMAGE_FOLDER)
-    print(article)
     article.download_image()
+
+    ip = '127.0.0.1:8000'
+    text = article.title
+    print(text)
+    yap = YapApi()
+    tokenized_text, segmented_text, lemmas, dep_tree, md_lattice, ma_lattice = yap.run(text, ip)
+    print(dep_tree.to_string())
+    print(type(dep_tree))
