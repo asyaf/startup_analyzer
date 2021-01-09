@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import os
+import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException, \
@@ -13,6 +14,9 @@ from src.utils import logger
 DRIVER_PATH = os.path.join('..', 'chrome_driver')
 DRIVER_NAME = 'chromedriver.exe'
 LOAD_PAUSE = 0.5
+
+CALCALIST_LOAD_MORE_ITM = 'hlm-load-more'
+OUTPUT_CSV = 'out.csv'
 
 
 def start_chrome_driver():
@@ -28,11 +32,12 @@ def driver_load_page(driver, url):
 
 
 def load_all_articles(driver):
+    # TODO: fix not all data loaded
     ind = 0
     prev_height = 0
     while True:
         try:
-            load_more = driver.find_element_by_class_name('hlm-load-more')
+            load_more = driver.find_element_by_class_name(CALCALIST_LOAD_MORE_ITM)
             height = driver.execute_script("return document.body.scrollHeight")
             logger.debug('Document height: {}'.format(height))
             if prev_height < height:
@@ -58,7 +63,7 @@ def gather_articles(driver):
     soup = BeautifulSoup(soup_file, 'lxml')
     articles = []
     for img_tag in soup.findAll('img'):
-        url = img_tag.get('data-url')
+        url = img_tag.get(ArticleLink.URL_ATTR)
         if url is not None:
             article_link = ArticleLink(img_tag)
             article_link.download_image()
@@ -67,9 +72,20 @@ def gather_articles(driver):
     return articles
 
 
-if __name__ == '__main__':
+def article_list_to_csv(out_csv, articles):
+    csv_data = [article.to_dict() for article in articles]
+    df = pd.DataFrame(csv_data)
+    df.to_csv(out_csv, index=False, encoding='utf-8')
+
+
+def main():
     chrome_driver = start_chrome_driver()
     driver_load_page(chrome_driver, CALCALIST_URL)
     load_all_articles(chrome_driver)
-    gather_articles(chrome_driver)
+    articles = gather_articles(chrome_driver)
+    article_list_to_csv(OUTPUT_CSV, articles)
     chrome_driver.quit()
+
+
+if __name__ == '__main__':
+    main()
