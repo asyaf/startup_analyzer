@@ -8,6 +8,8 @@ GEEKTIME_URL = 'https://www.geektime.co.il'
 GEEKTIME_SUB_URL = 'category/startup/'
 GEEKTIME_FILTERS = ['category', 'channel', '.php', 'author', 'contact']
 
+CALCALIST_URL = 'https://www.calcalist.co.il/home/0,7340,L-3704-1822,00.html'
+
 
 class Site:
     def __init__(self, url, sub_urls, filters):
@@ -30,12 +32,15 @@ class Site:
         html_page = urlopen(req)
 
         soup = BeautifulSoup(html_page, "lxml")
-
+        print(soup)
         links = []
-        for link in soup.findAll('a'):
-            curr_link = link.get('href')
-            if self.is_valid_link(curr_link):
-                links.append(curr_link)
+        # for link in soup.findAll('li'):
+        #     # print(link)
+        #     list_class = link.get('class')
+        #     if list_class is None:
+        #         print(link)
+        #     # if self.is_valid_link(curr_link):
+        #     #     links.append(curr_link)
         return links
 
     def is_valid_link(self, url_to_check):
@@ -54,12 +59,14 @@ class Site:
 
     @staticmethod
     def is_url(url):
-        request = requests.get('http://www.example.com')
+        request = requests.get(url)
         return request.status_code == 200
 
 
 if __name__ == '__main__':
-    geektime = Site(GEEKTIME_URL, [GEEKTIME_SUB_URL], GEEKTIME_FILTERS)
-    links = geektime.get_all_links()
+    # geektime = Site(GEEKTIME_URL, [GEEKTIME_SUB_URL], GEEKTIME_FILTERS)
+    # links = geektime.get_all_links()
+    site = Site(CALCALIST_URL, [], [])
+    links = site.get_all_links()
     for link in links:
         print(link)
