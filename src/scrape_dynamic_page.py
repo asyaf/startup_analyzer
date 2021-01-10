@@ -9,14 +9,14 @@ import time
 
 from src.article_link import ArticleLink
 from src.get_links import CALCALIST_URL
-from src.utils import logger
+from src.utils import logger, OUT_DIR
 
 DRIVER_PATH = os.path.join('..', 'chrome_driver')
 DRIVER_NAME = 'chromedriver.exe'
-LOAD_PAUSE = 0.5
+LOAD_PAUSE = 1.5
 
 CALCALIST_LOAD_MORE_ITM = 'hlm-load-more'
-OUTPUT_CSV = 'out.csv'
+OUT_PATH = os.path.join(OUT_DIR, 'out.csv')
 
 
 def start_chrome_driver():
@@ -83,7 +83,7 @@ def main():
     driver_load_page(chrome_driver, CALCALIST_URL)
     load_all_articles(chrome_driver)
     articles = gather_articles(chrome_driver)
-    article_list_to_csv(OUTPUT_CSV, articles)
+    article_list_to_csv(OUT_PATH, articles)
     chrome_driver.quit()
 
 
