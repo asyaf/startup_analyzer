@@ -4,9 +4,9 @@ import string
 
 
 def setup_logger():
-    logger = logging.getLogger('scraping')
+    logger = logging.getLogger('analysis')
     logger.setLevel(logging.DEBUG)
-    log_file = logging.FileHandler('log.txt', 'w')
+    log_file = logging.FileHandler('log.txt', 'w', 'utf-8')
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     log_file.setFormatter(formatter)
     logger.addHandler(log_file)

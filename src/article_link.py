@@ -5,8 +5,6 @@ import sys
 
 from src.utils import logger, random_string
 
-from YAPWrapper.yap_api import YapApi
-
 
 TEST_IMG_TAG = "<img alt='רוני זהבי מנכ\"ל ומייסד היי-בוב ' class=\"hd-image calc-share-with-zoom\" " \
                "data-articleid=\"3880691\" data-title=\"חברת Hibob הישראלית גייסה 70 מיליון דולר\" data-url=\"" \
@@ -59,10 +57,4 @@ if __name__ == '__main__':
     article = ArticleLink(soup.find('img'), IMAGE_FOLDER)
     article.download_image()
 
-    ip = '127.0.0.1:8000'
-    text = article.title
-    print(text)
-    yap = YapApi()
-    tokenized_text, segmented_text, lemmas, dep_tree, md_lattice, ma_lattice = yap.run(text, ip)
-    print(dep_tree.to_string())
-    print(type(dep_tree))
+
